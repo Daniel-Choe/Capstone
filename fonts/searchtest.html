@@ -1,0 +1,329 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta name="viewport" content="initial-scale=1.0, user-scalable=no">
+    <meta charset="utf-8">
+    <style>
+      html, body, #map-canvas {
+        height: 500px;
+        margin: 0px;
+        padding: 0px
+      }
+      .controls {
+        margin-top: 16px;
+        border: 1px solid transparent;
+        border-radius: 2px 0 0 2px;
+        box-sizing: border-box;
+        -moz-box-sizing: border-box;
+        height: 32px;
+        outline: none;
+        box-shadow: 0 2px 6px rgba(0, 0, 0, 0.3);
+      }
+
+      #pac-input {
+        background-color: #fff;
+        font-family: Roboto;
+        font-size: 15px;
+        font-weight: 300;
+        margin-left: 12px;
+        padding: 0 11px 0 13px;
+        text-overflow: ellipsis;
+        width: 400px;
+      }
+
+      #pac-input:focus {
+        border-color: #4d90fe;
+      }
+
+      .pac-container {
+        font-family: Roboto;
+      }
+
+      #type-selector {
+        color: #fff;
+        background-color: #4d90fe;
+        padding: 5px 11px 0px 11px;
+      }
+
+      #type-selector label {
+        font-family: Roboto;
+        font-size: 13px;
+        font-weight: 300;
+      }
+
+    </style>
+    <title>Places search box</title>
+    <script src="https://maps.googleapis.com/maps/api/js?v=3.exp&signed_in=true&libraries=places"></script>
+    <script>
+// This example adds a search box to a map, using the Google Place Autocomplete
+// feature. People can enter geographical searches. The search box will return a
+// pick list containing a mix of places and predicted search terms.
+var customIcons = {
+    };
+
+function initialize() {
+
+   var markers1 = [];
+
+	
+   var map = new google.maps.Map(document.getElementById("map-canvas"), {
+		center: new google.maps.LatLng(39.166531, -86.528549),
+		zoom: 15,
+		mapTypeId: 'roadmap'
+      		});
+
+
+
+  // Create the search box and link it to the UI element.
+  var input = /** @type {HTMLInputElement} */(
+      document.getElementById('pac-input'));
+  
+
+  var searchBox = new google.maps.places.SearchBox((input));
+
+  // [START region_getplaces]
+  // Listen for the event fired when the user selects an item from the
+  // pick list. Retrieve the matching places for that item.
+  google.maps.event.addListener(searchBox, 'places_changed', function() {
+    var places = searchBox.getPlaces();
+    var markers1 = [];
+    
+
+    if (places.length == 0) {
+      return;
+    }
+    for (var i = 0, marker1; marker1 = markers1[i]; i++) {
+      marker1.setMap(null);
+    }
+    markers1=[];
+
+    // For each place, get the icon, place name, and location.
+    
+    var bounds = new google.maps.LatLngBounds();
+    for (var i = 0, place; place = places[i]; i++) {
+      var image = {
+        url: place.icon,
+        size: new google.maps.Size(71, 71),
+        origin: new google.maps.Point(0, 0),
+        anchor: new google.maps.Point(17, 34),
+        scaledSize: new google.maps.Size(25, 25)
+      };
+
+      // Create a marker for each place.
+      var marker1 = new google.maps.Marker({
+        map: map,
+        icon: image,
+        title: place.name,
+        position: place.geometry.location
+      });
+
+      markers1.push(marker1);
+      
+
+      bounds.extend(place.geometry.location);
+    }
+  
+    
+
+    map.fitBounds(bounds);
+  });
+  // [END region_getplaces]
+   
+   
+
+  // Bias the SearchBox results towards places that are within the bounds of the
+  // current map's viewport.
+  google.maps.event.addListener(map, 'bounds_changed', function() {
+    var bounds = map.getBounds();
+    searchBox.setBounds(bounds);
+  });
+
+	
+	var passtypevalue = document.forms[0].passes.value;
+	var distancevalue = document.forms[0].distance.value;
+	var freevalue = document.forms[0].free.checked;
+	var metersvalue = document.forms[0].meters.checked;
+	var garagevalue = document.forms[0].garage.checked;
+	var campuspassvalue = document.forms[0].campuspass.checked;
+	var residentpassvalue = document.forms[0].residentpass.checked;
+	
+	
+	var infoWindow = new google.maps.InfoWindow;
+	// Change this depending on the name of your PHP file
+	downloadUrl("form_action.php", 
+	function(data) {
+		var xml = data.responseXML;
+        var markers = xml.documentElement.getElementsByTagName("marker");
+        for (var i = 0; i < markers.length; i++) {        
+        
+        var spot = markers[i].getAttribute("SpotID");
+        var type = markers[i].getAttribute("TypeOfPass");
+        var free = markers[i].getAttribute("Free");
+        var meter = markers[i].getAttribute("Meter");
+        var garage = markers[i].getAttribute("Garage");
+        var resident = markers[i].getAttribute("ResidentPass");
+        var notes = String(markers[i].getAttribute("Notes"));
+        
+        if (passtypevalue==markers[i].getAttribute("TypeOfPass")){
+          var point = new google.maps.LatLng(
+              parseFloat(markers[i].getAttribute("Latitude")),
+              parseFloat(markers[i].getAttribute("Longitude")));
+          var html = "<b>" + spot + "</b> <br/>" + type;
+          var icon = customIcons[type] || {};
+          var marker = new google.maps.Marker({
+            map: map,
+            position: point,
+            icon: icon.icon
+          });
+	bindInfoWindow(marker, map, infoWindow, html);
+          }
+        else if (freevalue==true && markers[i].getAttribute("Free")=="Yes"){
+          var point = new google.maps.LatLng(
+              parseFloat(markers[i].getAttribute("Latitude")),
+              parseFloat(markers[i].getAttribute("Longitude")));
+          var html = "<b>" + notes;
+          var pinColor = "FFA500";
+   		  var pinImage = new google.maps.MarkerImage("http://chart.apis.google.com/chart?chst=d_map_pin_letter&chld=F|" + pinColor,
+        	new google.maps.Size(21, 34),
+        	new google.maps.Point(0,0),
+        	new google.maps.Point(10, 34));
+          var marker = new google.maps.Marker({
+            map: map,
+            position: point,
+            icon: pinImage
+          });
+	bindInfoWindow(marker, map, infoWindow, html);
+          }
+        else if (metersvalue==true && markers[i].getAttribute("Meter")=="Yes"){
+          var rate = notes.slice(0,20);
+          var daysmetered = notes.slice(20,61);
+          var daysfree = notes.slice(62);   
+          var number = markers[i].getAttribute("NumberofSpots");
+          var point = new google.maps.LatLng(
+              parseFloat(markers[i].getAttribute("Latitude")),
+              parseFloat(markers[i].getAttribute("Longitude")));
+          var html ="<b> Number of Spots: " + number + "</b> <br/>" + rate + "<br />" + daysmetered + "<br />" + daysfree;
+          var pinColor = "85BB65";
+   		  var pinImage = new google.maps.MarkerImage("http://chart.apis.google.com/chart?chst=d_map_pin_letter&chld=M|" + pinColor,
+        	new google.maps.Size(21, 34),
+        	new google.maps.Point(0,0),
+        	new google.maps.Point(10, 34));
+          var marker = new google.maps.Marker({
+            map: map,
+            position: point,
+            icon: pinImage
+          });
+	bindInfoWindow(marker, map, infoWindow, html);
+          }
+        else if (garagevalue==true && markers[i].getAttribute("Garage")=="Yes"){
+          var name = markers[i].getAttribute("Name");
+          var timefree = markers[i].getAttribute("TimeFree");  
+          var rates = String(markers[i].getAttribute("Rates"));
+          var rates2 = rates.split(",");        
+          var allrates=[];  
+          for (var b = 0; b < rates2.length; b++) {
+    		allrates+=rates2[b]+"<br/>";
+			}      
+          var point = new google.maps.LatLng(
+              parseFloat(markers[i].getAttribute("Latitude")),
+              parseFloat(markers[i].getAttribute("Longitude")));
+          var html = "<b>" + name + "</b> <br/>Rates: <br />" + allrates + "Free: " + timefree; 
+          var icon = customIcons[type] || {};
+          var pinColor = "357EC7";
+   		  var pinImage = new google.maps.MarkerImage("http://chart.apis.google.com/chart?chst=d_map_pin_letter&chld=G|" + pinColor,
+        	new google.maps.Size(21, 34),
+        	new google.maps.Point(0,0),
+        	new google.maps.Point(10, 34));
+          var marker = new google.maps.Marker({
+            map: map,
+            position: point,
+            icon: pinImage
+          });
+	bindInfoWindow(marker, map, infoWindow, html);
+          }
+        else if (residentpassvalue==true && markers[i].getAttribute("ResidentPass")=="Yes"){
+          var point = new google.maps.LatLng(
+              parseFloat(markers[i].getAttribute("Latitude")),
+              parseFloat(markers[i].getAttribute("Longitude")));
+          var html = "<b>Zone: " + notes;
+          var icon = customIcons[type] || {};
+          var pinColor = "C38EC7";
+   		  var pinImage = new google.maps.MarkerImage("http://chart.apis.google.com/chart?chst=d_map_pin_letter&chld=R|" + pinColor,
+        	new google.maps.Size(21, 34),
+        	new google.maps.Point(0,0),
+        	new google.maps.Point(10, 34));
+          var marker = new google.maps.Marker({
+            map: map,
+            position: point,
+            icon: pinImage
+          });
+	bindInfoWindow(marker, map, infoWindow, html);
+          }
+          }
+        });
+}
+function bindInfoWindow(marker, map, infoWindow, html) {
+	google.maps.event.addListener(marker, 'click', 
+	function() {
+        infoWindow.setContent(html);
+        infoWindow.open(map, marker);
+      });
+}
+
+function downloadUrl(url, callback) {
+	var request = window.ActiveXObject ?
+		new ActiveXObject('Microsoft.XMLHTTP') :
+		new XMLHttpRequest;
+
+	request.onreadystatechange = function() {
+		if (request.readyState == 4) {
+			request.onreadystatechange = doNothing;
+			callback(request, request.status);
+		}
+	};
+   
+	request.open('GET', url, true);
+	request.send(null);
+    }
+
+
+    function doNothing() {}
+
+
+    </script>
+    <style>
+      #target {
+        width: 345px;
+      }
+    </style>
+  </head>
+  <body onload="initialize()">
+    <input id="pac-input" class="controls" type="text" placeholder="Search Box">
+    <div id="map-canvas"></div>
+        <form name="users" action="form_action.php">
+    <div class="select-wrapper"><select id="passes" name="passes" onchange="initialize()" >
+    <option>Type of Pass</option>
+    <option value="A">A</option>
+    <option value="B">B</option>
+    <option value="C">C</option>
+    <option value="D">D</option>
+    </select><br /></div>
+    
+   <select id="distance" name="distance" onchange="initialize()">
+    <option value="">Within Distance of</option>
+    <option value="1/4 Mile">1/4 Mile</option>
+    <option value="1/2 Mile">1/2 Mile</option>
+    <option value="1 Mile">1 Mile</option>
+    <option value="2 Miles">2 Miles</option>
+    </select>
+    
+ 
+    Free: <input type = "checkbox" id="free" value = "yes" name="free" onchange="initialize()" /><br />
+    Meters: <input type = "checkbox" id="meters" value = "yes" name="meters" onchange="initialize()"/><br />
+    Garage: <input type = "checkbox" id="garage" value = "yes" name="garage" onchange="initialize()"/><br />
+    Campus Pass: <input type = "checkbox" id="campuspass" value = "yes" name="campus_pass" onchange="initialize()"/><br />
+    Resident Pass: <input type = "checkbox" id="residentpass" value = "yes" name="resident_pass" onchange="initialize()"/><br/>
+    <input type="submit" value="Submit">
+    </form>
+  </body>
+</html>

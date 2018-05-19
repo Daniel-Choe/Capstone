@@ -1,0 +1,177 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+
+<script type="text/javascript" src="https://maps.googleapis.com/maps/api/js?v=3.exp&signed_in=true&libraries=places"></script>
+<script type="text/javascript" src="main.js"></script>
+
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<meta name="viewport" content="initial-scale=1.0, user-scalable=no">
+    <meta charset="utf-8">
+    <meta name="keywords" content="" />
+	<meta name="description" content="" />
+	<link href="default.css" rel="stylesheet" type="text/css" media=
+    "all" />
+	<link href="fonts.css" rel="stylesheet" type="text/css" media=
+    "all" />
+
+    <style>
+      html, body{
+        height: 100%;
+        margin: 0px;
+        padding: 0px
+      }
+    #map-canvas { position: fixed; height: 100%; width:800px}
+      
+	#map-canvas2 {
+	height: 80%;	
+	padding-left:10px;
+	padding-top:3px;
+	float:left;
+	
+}
+	  
+      .controls {
+        margin-top: 4px;
+        border: 1px solid transparent;
+        border-radius: 2px 0 0 2px;
+        box-sizing: border-box;
+        -moz-box-sizing: border-box;
+        height: 32px;
+        outline: none;
+        box-shadow: 0 2px 6px rgba(0, 0, 0, 0.3);
+      }
+
+      #pac-input {
+        background-color: #fff;
+        padding: 0 5px 0 5px;
+        width: 40%;
+        font-family: Roboto;
+        font-size: 15px;
+        font-weight: 300;
+        text-overflow: ellipsis;
+      }
+
+      #pac-input:focus {
+        border-color: #4d90fe;
+        width: 40%;
+      }
+
+      .pac-container {
+        font-family: Roboto;
+      }
+
+      #type-selector {
+        color: #fff;
+        background-color: #4d90fe;
+        padding: 5px 5px 0px 5px;
+      }
+
+      #type-selector label {
+        font-family: Roboto;
+        font-size: 13px;
+        font-weight: 300;
+      }
+}
+
+    </style>
+    
+<title>Btown Parking</title>
+
+
+</head>
+<body onload="load()">
+
+<div id="header-wrapper" class="container">
+	<div id="header" class="container">
+		<div id="logo"  class="container">
+		  <h1><img src="Btown_Logo.png" alt="" class="image" ></h1>
+		</div>
+		<div id="menu"  class="container">
+			<ul>
+				<li class="current_page_item"><a href="homepage.html" accesskey="1" title="">Homepage</a></li>
+				<li><a href="addinfo.html" accesskey="2" title="">Additional Information</a></li>
+				<li><a href="aboutus.html" accesskey="3" title="">About Us</a></li>
+			</ul>
+		</div>
+		</div>
+	
+		</div>
+		
+	</div>
+</div>
+
+<div id="wrapper1">
+	<div id="welcome" class="container">
+		<div class="title">
+			<h2>Welcome to Btown Parking</h2>
+			<span class="byline">Avoid stress and trouble. Find a spot ahead of time.</span> </div>
+		<input id="pac-input" class="controls" type="text" placeholder="Enter Location" >
+		&nbsp; OR
+		<a href="#pac-input">
+		<button type="button" class="button1 submit" id="currentlocation" value="true">
+		Go to Current Location!</button></a>
+	</div>	
+</div>
+
+<div id="mapwrapper">
+	<div id="map" class="container">
+	</div>
+	<div id="map-canvas2">
+  
+    <form id="form1" name="users" action="form_action.php">
+    <div class="select-wrapper"><select id="passes" name="passes" onchange="load()" >
+    <option>Select Type of Pass</option>
+    <option value="A">A</option>
+    <option value="B">B</option>
+    <option value="C">C</option>
+    <option value="D">D</option>
+    </select><br /></div>
+    
+   <select id="distance" name="distance" onchange="load()">
+    <option>Within Distance of</option>
+    <option value="1/4 Mile">1/4 Mile</option>
+    <option value="1/2 Mile">1/2 Mile</option>
+    <option value="1 Mile">1 Mile</option>
+    <option value="2 Miles">2 Miles</option>
+    </select>
+    
+ 	
+ 	<table>
+ 	<tr><td>Free:</td> <td><input type = "checkbox" id="free" value = "yes" name="free" onchange="load()" /><br /></td></tr>
+    <tr><td>Meters: </td> <td><input type = "checkbox" id="meters" value = "yes" name="meters" onchange="load()"/><br /></td></tr>
+    <tr><td>Garage: </td> <td><input type = "checkbox" id="garage" value = "yes" name="garage" onchange="load()"/><br /></td></tr>
+    <tr><td>Resident Pass: </td> <td><input type = "checkbox" id="residentpass" value = "yes" name="resident_pass" onchange="load()"/><br/></td></tr>
+     </table>
+    </div>
+    
+    </form>
+
+</div>
+</div>
+<div id="indexwrapper">
+	<div id="footer" class="container">
+		<div>
+			<header class="title">
+				<h2>Get in touch with our team</h2>
+                <div class="content"> <a href="addinfo.html" class="button">Contact Us</a> </div>
+				</header>
+			<ul class="contact">
+				<li><a href="https://twitter.com/BtownParking" class="icon icon-twitter"><span>Twitter</span></a></li>
+				<li><a href="https://www.facebook.com/profile.php?id=100009300105319" class="icon icon-facebook"><span></span></a></li>
+				<li><a href="https://dribbble.com/BtownParking" class="icon icon-dribbble"><span>Dribbble</span></a></li>
+				<li><a href="https://plus.google.com/u/0/114439675636587694083/posts" class="icon icon-tumblr"><span>Google+</span></a></li>
+				<li><a href="http://www.feedspot.com/u/bf73e6935a26" class="icon icon-rss"><span>Feedspot</span></a></li>
+			</ul>
+		</div>
+	</div>
+</div>
+
+<div id="copyright">
+	<p>&copy; BloomingtonParking. All rights reserved. | Photos by <a href="http://fotogrph.com/">Fotogrph</a> | Design by <a href="http://templated.co" rel="nofollow">TEMPLATED</a>.</p>
+</div>
+
+
+</body>
+</html>

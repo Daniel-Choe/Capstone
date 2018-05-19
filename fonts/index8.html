@@ -1,0 +1,226 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+
+<script type="text/javascript" src="https://maps.googleapis.com/maps/api/js?v=3.exp&signed_in=true&libraries=places"></script>
+<script type="text/javascript">
+
+var customIcons = {
+      restaurant: {
+        icon: 'http://labs.google.com/ridefinder/images/mm_20_blue.png'
+      },
+      bar: {
+        icon: 'http://labs.google.com/ridefinder/images/mm_20_red.png'
+      }
+    };
+    
+function load() {
+	var map = new google.maps.Map(document.getElementById("map"), {
+		center: new google.maps.LatLng(39.166531, -86.528549),
+		zoom: 16,
+		mapTypeId: 'roadmap'
+      		});
+	
+	var passtypevalue = document.forms[0].passes.value;
+	var distancevalue = document.forms[0].distance.value;
+	var freevalue = document.forms[0].free.checked;
+	var metersvalue = document.forms[0].meters.checked;
+	var garagevalue = document.forms[0].garage.checked;
+	var campuspassvalue = document.forms[0].campuspass.checked;
+	var residentpassvalue = document.forms[0].residentpass.checked;
+	
+	var infoWindow = new google.maps.InfoWindow;
+	// Change this depending on the name of your PHP file
+	downloadUrl("form_action.php", 
+	function(data) {
+		var xml = data.responseXML;
+        var markers = xml.documentElement.getElementsByTagName("marker");
+        for (var i = 0; i < markers.length; i++) {if (passtypevalue==markers[i].getAttribute("TypeOfPass") || freevalue==true || metersvalue==true || garagevalue==true || campuspassvalue==true || residentpassvalue==true){
+          var spot = markers[i].getAttribute("SpotID");
+          var type = markers[i].getAttribute("TypeOfPass");
+          var free = markers[i].getAttribute("Free");
+          var meter = markers[i].getAttribute("Meter");
+          var garage = markers[i].getAttribute("Garage");
+          var resident = markers[i].getAttribute("ResidentPass");
+          var point = new google.maps.LatLng(
+              parseFloat(markers[i].getAttribute("Latitude")),
+              parseFloat(markers[i].getAttribute("Longitude")));
+          var html = "<b>" + spot + "</b> <br/>" + type;
+          var icon = customIcons[type] || {};
+          var marker = new google.maps.Marker({
+            map: map,
+            position: point,
+            icon: icon.icon
+          });
+	bindInfoWindow(marker, map, infoWindow, html);
+          }}
+        });
+}
+    
+function bindInfoWindow(marker, map, infoWindow, html) {
+	google.maps.event.addListener(marker, 'click', 
+	function() {
+        infoWindow.setContent(html);
+        infoWindow.open(map, marker);
+      });
+}
+
+function downloadUrl(url, callback) {
+	var request = window.ActiveXObject ?
+		new ActiveXObject('Microsoft.XMLHTTP') :
+		new XMLHttpRequest;
+
+	request.onreadystatechange = function() {
+		if (request.readyState == 4) {
+			request.onreadystatechange = doNothing;
+			callback(request, request.status);
+		}
+	};
+   
+	request.open('GET', url, true);
+	request.send(null);
+    }
+     up206b.initialize = function()
+        {
+            var latlng = new google.maps.LatLng(34.070264, -118.4440562);
+            var myOptions = {
+                zoom: 13,
+                center: latlng,
+                mapTypeId: google.maps.MapTypeId.ROADMAP
+            };
+            map = new google.maps.Map(document.getElementById("map-canvas"), myOptions);
+        }
+
+    function doNothing() {}
+
+</script>
+
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<meta name="viewport" content="initial-scale=1.0, user-scalable=no">
+    <meta charset="utf-8">
+    <meta name="keywords" content="" />
+	<meta name="description" content="" />
+	<link href="default.css" rel="stylesheet" type="text/css" media=
+    "all" />
+	<link href="fonts.css" rel="stylesheet" type="text/css" media=
+    "all" />
+
+    <style>
+      html, body{
+        height: 100%;
+        margin: 0px;
+        padding: 0px
+      }
+      #map-canvas { position: fixed; height: 100%; width:800px}
+	#map-canvas2 {
+	height: 357px;
+	top: 0px;
+	float: left;
+}
+	  
+      .controls {
+        margin-top: 4px;
+        border: 1px solid transparent;
+        border-radius: 2px 0 0 2px;
+        box-sizing: border-box;
+        -moz-box-sizing: border-box;
+        height: 32px;
+        outline: none;
+        box-shadow: 0 2px 6px rgba(0, 0, 0, 0.3);
+      }
+
+      #pac-input {
+        background-color: #fff;
+        padding: 0 5px 0 5px;
+        width: 400px;
+        font-family: Roboto;
+        font-size: 15px;
+        font-weight: 300;
+        text-overflow: ellipsis;
+      }
+
+      #pac-input:focus {
+        border-color: #4d90fe;
+        margin-left: -1px;
+        padding-left: 14px;  /* Regular padding-left + 1. */
+        width: 401px;
+      }
+
+      .pac-container {
+        font-family: Roboto;
+      }
+
+      #type-selector {
+        color: #fff;
+        background-color: #4d90fe;
+        padding: 5px 5px 0px 5px;
+      }
+
+      #type-selector label {
+        font-family: Roboto;
+        font-size: 13px;
+        font-weight: 300;
+      }
+}
+
+    </style>
+    
+<title>Bloomington Parking</title>
+
+
+</head>
+<body onload="load()">
+ 
+<div id="header-wrapper">
+	<div id="header" class="container">
+		<div id="logo">
+		  <h1><img src="Btown_Logo.png" alt="" width="250" height="168" class="image" ></h1>
+			<span>Save time and trouble. Find a place to park around your destination ahead of time.</a></span> </div>
+		<div id="menu">
+			<ul>
+				<li class="current_page_item"><span class="container"><a href="index8.html" accesskey="1" title=""></a></span><a href="index8.html" accesskey="1" title="">Homepage</a></li>
+				<li><a href="addinfo.html" accesskey="2" title="">Additional Information</a></li>
+				<li><a href="aboutus.html" accesskey="3" title="">About Us</a></li>
+			</ul>
+		</div>
+	</div>
+</div>
+
+
+<div id="map-canvas2">
+  
+    <form name="users" action="form_action.php">
+    <div class="select-wrapper"><select id="passes" name="passes" onchange="load()" >
+    <option value="">Type of Pass</option>
+    <option value="A">A</option>
+    <option value="B">B</option>
+    <option value="C">C</option>
+    <option value="D">D</option>
+    </select><br /></div>
+    
+   <select id="distance" name="distance" onchange="load()">
+    <option value="">Within Distance of</option>
+    <option value="1/4 Mile">1/4 Mile</option>
+    <option value="1/2 Mile">1/2 Mile</option>
+    <option value="1 Mile">1 Mile</option>
+    <option value="2 Miles">2 Miles</option>
+    </select>
+    
+ 
+    Free: <input type = "checkbox" id="free" value = "yes" name="free" onchange="load()" /><br />
+    Meters: <input type = "checkbox" id="meters" value = "yes" name="meters" onchange="load()"/><br />
+    Garage: <input type = "checkbox" id="garage" value = "yes" name="garage" onchange="load()"/><br />
+    Campus Pass: <input type = "checkbox" id="campuspass" value = "yes" name="campus_pass" onchange="load()"/><br />
+    Resident Pass: <input type = "checkbox" id="residentpass" value = "yes" name="resident_pass" onchange="load()"/><br/>
+    </form>
+
+</div>
+
+<div id="map" style="width: 700px; height: 500px; position: relative">
+</div>
+  
+
+
+</body>
+</html>
